@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obstetrics OSCE Slide Exam</title>
+  <style>
+    :root {
+      --bg: #f2f5f4;
+      --surface: #ffffff;
+      --surface-soft: #f7f9f8;
+      --ink: #172126;
+      --muted: #66737a;
+      --line: #d9e1de;
+      --teal: #08706b;
+      --teal-dark: #064f4c;
+      --red: #b92e2e;
+      --green: #227448;
+      --amber: #9a6a1f;
+      --shadow: 0 18px 44px rgba(23, 33, 38, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        linear-gradient(135deg, rgba(8, 112, 107, 0.12), transparent 34%),
+        linear-gradient(225deg, rgba(185, 46, 46, 0.08), transparent 30%),
+        var(--bg);
+    }
+
+    button, textarea { font: inherit; }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.48;
+    }
+
+    .shell {
+      width: min(1360px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 18px 0 28px;
+    }
+
+    .topbar,
+    .start-view,
+    .exam-view,
+    .finish-view {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      border-radius: 8px 8px 0 0;
+    }
+
+    h1, h2, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 4px;
+      font-size: clamp(1.45rem, 2.5vw, 2.25rem);
+      letter-spacing: 0;
+    }
+
+    .eyebrow {
+      margin-bottom: 4px;
+      color: var(--teal);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .pill {
+      min-width: 108px;
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+      text-align: center;
+    }
+
+    .timer {
+      color: var(--teal-dark);
+      font-variant-numeric: tabular-nums;
+      font-weight: 900;
+    }
+
+    .timer.over {
+      color: var(--red);
+      border-color: rgba(185, 46, 46, 0.5);
+      background: #fff5f5;
+    }
+
+    .start-view,
+    .finish-view {
+      display: grid;
+      place-items: center;
+      min-height: 58vh;
+      padding: 28px;
+      border-top: 0;
+      border-radius: 0 0 8px 8px;
+      text-align: center;
+    }
+
+    .start-card {
+      max-width: 740px;
+    }
+
+    .start-card h2,
+    .finish-view h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      letter-spacing: 0;
+    }
+
+    .start-card p,
+    .finish-view p {
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.55;
+    }
+
+    .start-options {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 10px 0 18px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .start-options select {
+      min-height: 38px;
+      border: 1px solid #cbd6d2;
+      border-radius: 8px;
+      padding: 0 10px;
+      color: var(--ink);
+      background: #fff;
+      font: inherit;
+      font-weight: 800;
+    }
+
+    .category-count {
+      margin: -4px 0 20px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .primary,
+    .secondary {
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 8px;
+    }
+
+    .primary {
+      color: #fff;
+      background: var(--teal);
+    }
+
+    .primary:hover { background: var(--teal-dark); }
+
+    .secondary {
+      color: var(--teal-dark);
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .exam-view {
+      display: none;
+      grid-template-columns: minmax(320px, 0.95fr) minmax(360px, 1.05fr);
+      gap: 0;
+      border-top: 0;
+      border-radius: 0 0 8px 8px;
+      overflow: hidden;
+    }
+
+    .visual-pane,
+    .question-pane {
+      min-width: 0;
+      padding: 18px;
+    }
+
+    .visual-pane {
+      border-right: 1px solid var(--line);
+      background: #fbfcfc;
+    }
+
+    .slide-title {
+      display: flex;
+      justify-content: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .slide-frame {
+      display: grid;
+      place-items: center;
+      min-height: 360px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .slide-frame img {
+      display: block;
+      max-width: 100%;
+      max-height: 68vh;
+      object-fit: contain;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .question {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+      padding: 14px;
+    }
+
+    .question h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      line-height: 1.4;
+      letter-spacing: 0;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 92px;
+      resize: vertical;
+      border: 1px solid #cbd6d2;
+      border-radius: 8px;
+      padding: 11px 12px;
+      color: var(--ink);
+      background: #fff;
+      line-height: 1.45;
+    }
+
+    textarea:focus {
+      outline: 3px solid rgba(8, 112, 107, 0.16);
+      border-color: var(--teal);
+    }
+
+    .result {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      line-height: 1.5;
+    }
+
+    .result strong { display: inline-block; margin-bottom: 4px; }
+    .result.correct { border-color: rgba(34, 116, 72, 0.4); background: #f3fbf6; }
+    .result.partial { border-color: rgba(154, 106, 31, 0.45); background: #fffaf0; }
+    .result.incorrect { border-color: rgba(185, 46, 46, 0.35); background: #fff7f6; }
+
+    .verdict {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .verdict.correct { background: var(--green); }
+    .verdict.partial { background: var(--amber); }
+    .verdict.incorrect { background: var(--red); }
+
+    .answer-text {
+      margin: 8px 0 0;
+      color: var(--ink);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .control-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 860px) {
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .meta { justify-content: flex-start; }
+      .exam-view { grid-template-columns: 1fr; }
+      .visual-pane { border-right: 0; border-bottom: 1px solid var(--line); }
+      .slide-frame { min-height: 260px; }
+      .slide-frame img { max-height: 52vh; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">OB/GYN OSCE</p>
+        <h1>Practical Slide Exam</h1>
+      </div>
+      <div class="meta">
+        <div class="pill" id="progressText">Ready</div>
+        <div class="pill timer" id="timerText">00:00</div>
+        <div class="pill" id="scoreText">0 checked</div>
+      </div>
+    </header>
+
+    <section class="start-view" id="startView">
+      <div class="start-card">
+        <h2>Start a 30-second slide drill</h2>
+        <p>Each station shows one slide with its questions. The timer turns red after 30 seconds and stays on the same slide until you check your answers and move on.</p>
+        <label class="start-options">
+          Category
+          <select id="categorySelect">
+            <option value="obstetrics">Obstetrics</option>
+            <option value="gynecology">Gynecology</option>
+            <option value="both">Both</option>
+          </select>
+        </label>
+        <p class="category-count" id="categoryCountText">0 slides available</p>
+        <br>
+        <button class="primary" id="startBtn">Start Exam</button>
+      </div>
+    </section>
+
+    <section class="exam-view" id="examView">
+      <div class="visual-pane">
+        <div class="slide-title">
+          <span id="slideLabel">Slide</span>
+        </div>
+        <div class="slide-frame">
+          <img id="slideImage" src="" alt="">
+        </div>
+      </div>
+
+      <div class="question-pane">
+        <div class="question-list" id="questionList"></div>
+        <div class="controls">
+          <div class="control-group">
+            <button class="secondary" id="restartBtn">Restart</button>
+            <button class="secondary" id="menuBtn">Main Menu</button>
+          </div>
+          <div class="control-group">
+            <button class="secondary" id="prevBtn" disabled>Previous</button>
+            <button class="secondary" id="repeatBtn" disabled>Show Again</button>
+            <button class="primary" id="checkBtn">Check Answers</button>
+            <button class="primary" id="nextBtn" disabled>Next</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="finish-view hidden" id="finishView">
+      <div>
+        <h2>Exam complete</h2>
+        <p id="finishText"></p>
+        <button class="primary" id="againBtn">Start Again</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="obstetrics-docx-slides.js"></script>
+  <script src="gynecology-docx-slides.js"></script>
+  <script>
+    const slides = [
+      {
+        n: 1,
+        title: "Placental Abruption",
+        image: "assets/ob-osce-extracted/image-001-swapped-labels-hemorrhage-hidden.png",
+        questions: [
+          {
+            prompt: "What is the diagnosis shown in the slide?",
+            answer: "Placental abruption (abruptio placentae).",
+            explanation: "Bleeding occurs from premature separation of a normally sited placenta.",
+            keywords: ["placental", "abruption", "abruptio"]
+          },
+          {
+            prompt: "What are the clinical types demonstrated in images A and B?",
+            answer: "A is concealed abruption; hemorrhage is trapped behind the placenta. B is revealed abruption; blood tracks down between membranes and uterine wall and escapes through the cervix.",
+            explanation: "The key distinction is whether vaginal bleeding is visible externally.",
+            keywords: ["concealed", "revealed", "behind placenta", "external bleeding", "cervix"]
+          }
+        ]
+      },
+      {
+        n: 2,
+        title: "Polyhydramnios",
+        image: "assets/ob-osce-extracted/image-014-text-hidden.png",
+        questions: [
+          {
+            prompt: "What is the obstetrical problem shown in the image?",
+            answer: "Polyhydramnios, meaning excessive amniotic fluid volume.",
+            explanation: "The uterus is overdistended because amniotic fluid volume is abnormally increased.",
+            keywords: ["polyhydramnios", "excessive", "amniotic", "fluid"]
+          },
+          {
+            prompt: "Mention 3 complications related to this condition.",
+            answer: "PPROM or preterm delivery, cord prolapse after membrane rupture, placental abruption after sudden decompression, postpartum hemorrhage due to uterine atony, high perinatal mortality, and congenital abnormalities such as GI atresia or anencephaly.",
+            explanation: "Overdistension and sudden decompression explain many maternal and fetal risks.",
+            keywords: ["pprom", "preterm", "cord prolapse", "abruption", "postpartum hemorrhage", "atony", "congenital", "mortality"]
+          }
+        ]
+      },
+      {
+        n: 3,
+        title: "Controlled Cord Traction",
+        image: "assets/ob-osce-extracted/image-016.png",
+        questions: [
+          {
+            prompt: "What is the procedure demonstrated in this image?",
+            answer: "Controlled cord traction (CCT), also called the Brandt-Andrews maneuver.",
+            explanation: "It uses traction on the cord with uterine counter-traction to deliver the placenta safely.",
+            keywords: ["controlled cord traction", "cct", "brandt", "andrews"]
+          },
+          {
+            prompt: "During which stage of labor is this procedure performed?",
+            answer: "The third stage of labor, as part of active management to deliver the placenta.",
+            explanation: "The third stage begins after fetal delivery and ends after placental delivery.",
+            keywords: ["third stage", "placenta", "active management"]
+          },
+          {
+            prompt: "What serious complication can occur if performed incorrectly?",
+            answer: "Acute uterine inversion.",
+            explanation: "Excess traction without proper fundal support can pull the uterine fundus down through the cervix.",
+            keywords: ["uterine inversion", "inversion"]
+          }
+        ]
+      },
+      {
+        n: 4,
+        title: "Uterine Incisions",
+        image: "assets/ob-osce-extracted/slide-004-bottom-text-hidden.png",
+        questions: [
+          {
+            prompt: "Which incision is most commonly used in practical obstetrics, and what is its name?",
+            answer: "Incision A: lower uterine transverse incision, also called the Kerr incision.",
+            explanation: "The lower transverse incision is preferred because it is safer in future pregnancies.",
+            keywords: ["lower", "transverse", "kerr"]
+          },
+          {
+            prompt: "Which incision carries a higher risk of uterine rupture in subsequent pregnancies?",
+            answer: "Incision B: classical incision, a vertical incision in the upper contractile segment.",
+            explanation: "A classical upper-segment scar has a higher rupture risk in later pregnancies.",
+            keywords: ["classical", "vertical", "upper segment", "rupture"]
+          },
+          {
+            prompt: "Mention 2 indications for performing incision B.",
+            answer: "Extreme prematurity with an undeveloped lower segment, impacted transverse lie, anterior placenta previa with marked lower-segment vascularity, or dense adhesions obscuring the lower segment.",
+            explanation: "Classical incision is reserved for cases where the lower uterine segment is unsafe or inaccessible.",
+            keywords: ["prematurity", "transverse lie", "placenta previa", "adhesions", "undeveloped lower segment"]
+          }
+        ]
+      },
+      {
+        n: 5,
+        title: "Obstetric Forceps",
+        image: "assets/ob-osce-extracted/image-017-shank-hidden.png",
+        questions: [
+          {
+            prompt: "Identify this instrument and the specific part indicated.",
+            answer: "Obstetric forceps; the indicated mid-section is the shank.",
+            explanation: "The forceps parts include blade, shank, lock, handle, and pelvic curve.",
+            keywords: ["forceps", "shank"]
+          },
+          {
+            prompt: "What type of forceps is characterized by a long, pronounced pelvic curve?",
+            answer: "Long curved forceps.",
+            explanation: "Long curved forceps were used for higher or mid-pelvic applications, although high forceps are obsolete.",
+            keywords: ["long", "curved", "forceps"]
+          }
+        ]
+      },
+      {
+        n: 6,
+        title: "Umbilical Cord Prolapse",
+        image: "assets/ob-osce-extracted/image-018.png",
+        questions: [
+          {
+            prompt: "Following rupture of membranes, this complication occurs. What is its name?",
+            answer: "Umbilical cord prolapse.",
+            explanation: "The cord descends ahead of the presenting fetal part after membrane rupture.",
+            keywords: ["cord prolapse", "umbilical"]
+          },
+          {
+            prompt: "What is the first fetal parameter you must monitor once diagnosed?",
+            answer: "Immediately assess and continuously monitor fetal heart rate.",
+            explanation: "Cord compression can rapidly cause severe bradycardia or decelerations.",
+            keywords: ["fetal heart", "fhr", "bradycardia", "decelerations"]
+          },
+          {
+            prompt: "List predisposing pre-term or intrapartum risk factors.",
+            answer: "Prematurity, low birth weight, malpresentation such as breech or transverse lie, second twin delivery, and high multiparity.",
+            explanation: "Risk increases when the presenting part does not fit the lower segment well.",
+            keywords: ["prematurity", "low birth weight", "malpresentation", "breech", "transverse", "second twin", "multiparity"]
+          }
+        ]
+      },
+      {
+        n: 7,
+        title: "Myometrial Architecture and Receptors",
+        image: "assets/ob-osce-extracted/image-019-labels-hidden.png",
+        questions: [
+          {
+            prompt: "Name the three muscular layers of the myometrium and their fiber arrangements.",
+            answer: "Outer longitudinal fibers, middle interlacing mesh-like or figure-of-eight fibers, and inner circular sphincteric fibers.",
+            explanation: "The middle layer acts as living ligatures around vessels after delivery.",
+            keywords: ["outer", "longitudinal", "middle", "mesh", "figure", "inner", "circular"]
+          },
+          {
+            prompt: "Which receptors increase dramatically on the myometrium before delivery?",
+            answer: "Oxytocin receptors.",
+            explanation: "Estrogen promotes oxytocin receptor upregulation near term.",
+            keywords: ["oxytocin", "receptors"]
+          }
+        ]
+      },
+      {
+        n: 8,
+        title: "Twin-to-Twin Transfusion Syndrome",
+        image: "assets/ob-osce-extracted/image-020.png",
+        questions: [
+          {
+            prompt: "Define the zygosity and chorionicity of a pregnancy prone to TTTS.",
+            answer: "TTTS occurs in monochorionic diamniotic twin pregnancies: one zygote, one placenta, two amniotic sacs, and two fetuses.",
+            explanation: "A shared monochorionic placenta allows vascular anastomoses between twins.",
+            keywords: ["monochorionic", "diamniotic", "mcda", "one placenta", "two sacs"]
+          },
+          {
+            prompt: "Mention clinical complications affecting the donor twin.",
+            answer: "Severe anemia, hypotension, oliguria, severe oligohydramnios or stuck twin, fetal growth restriction, renal insufficiency or failure, and fetal demise.",
+            explanation: "The donor loses blood volume through placental vascular connections.",
+            keywords: ["anemia", "hypotension", "oliguria", "oligohydramnios", "stuck", "growth restriction", "renal", "demise"]
+          },
+          {
+            prompt: "Mention clinical complications affecting the recipient twin.",
+            answer: "Polycythemia, hypertension, polyuria, severe polyhydramnios, circulatory overload, high-output heart failure, hydrops fetalis, and fetal demise.",
+            explanation: "The recipient receives excess blood volume and develops overload.",
+            keywords: ["polycythemia", "hypertension", "polyuria", "polyhydramnios", "overload", "heart failure", "hydrops", "demise"]
+          }
+        ]
+      },
+      {
+        n: 9,
+        title: "Transverse Lie",
+        image: "assets/ob-osce-extracted/image-003-text-hidden.png",
+        questions: [
+          {
+            prompt: "Identify the fetal lie and the presenting part according to the image.",
+            answer: "Transverse lie with shoulder presentation, usually the acromion process.",
+            explanation: "The fetal long axis is perpendicular to the maternal long axis.",
+            keywords: ["transverse", "shoulder", "acromion"]
+          },
+          {
+            prompt: "What is the most serious imminent complication associated with this lie?",
+            answer: "Umbilical cord prolapse or arm prolapse after spontaneous or artificial rupture of membranes.",
+            explanation: "The poor fit of the presenting part leaves space for cord or arm descent.",
+            keywords: ["cord prolapse", "arm prolapse", "rupture of membranes"]
+          }
+        ]
+      },
+      {
+        n: 10,
+        title: "Bandl's Ring",
+        image: "assets/ob-osce-extracted/image-004.png",
+        questions: [
+          {
+            prompt: "What is the diagnosis of the physical finding shown on the maternal abdomen?",
+            answer: "Pathological retraction ring, also called Bandl's ring.",
+            explanation: "It is a visible or palpable retraction ring in obstructed labor.",
+            keywords: ["bandl", "pathological", "retraction ring"]
+          },
+          {
+            prompt: "Under what circumstances does this ring develop, and what are the findings?",
+            answer: "It develops in neglected obstructed labor. There is a sharp indentation between a tonically contracted thick upper segment and a thin, overdistended, tender lower uterine segment.",
+            explanation: "The ring marks the boundary between upper and lower uterine segments under dangerous tension.",
+            keywords: ["obstructed labor", "upper segment", "lower segment", "tender", "overdistended", "indentation"]
+          },
+          {
+            prompt: "What does the emergence of this sign urgently indicate?",
+            answer: "Imminent uterine rupture; emergency cesarean section is mandatory.",
+            explanation: "Bandl's ring is a late warning sign and should be treated as an obstetric emergency.",
+            keywords: ["uterine rupture", "emergency", "cesarean", "c section"]
+          }
+        ]
+      },
+      {
+        n: 11,
+        title: "Abdominal Skin Incisions",
+        image: "assets/ob-osce-extracted/slide-011-incision-names-hidden.png",
+        questions: [
+          {
+            prompt: "Identify the two maternal skin incisions shown in the slide.",
+            answer: "Pfannenstiel incision and infra-umbilical vertical midline incision.",
+            explanation: "Pfannenstiel is low transverse; infra-umbilical is a vertical midline entry below the umbilicus.",
+            keywords: ["pfannenstiel", "infra umbilical", "vertical", "midline"]
+          },
+          {
+            prompt: "What are the indications for choosing the red incision?",
+            answer: "Extreme maternal obesity, suspected intra-abdominal pathology needing exploration, or need for rapid access to the uterine fundus such as classical cesarean section.",
+            explanation: "The vertical incision gives quicker and broader abdominal access.",
+            keywords: ["obesity", "pathology", "exploratory", "rapid access", "fundus", "classical"]
+          },
+          {
+            prompt: "Which incision has a higher risk of postoperative incisional hernia?",
+            answer: "The infra-umbilical vertical midline incision.",
+            explanation: "Midline wounds have more tension across the linea alba.",
+            keywords: ["infra umbilical", "vertical", "midline", "hernia"]
+          }
+        ]
+      },
+      {
+        n: 12,
+        title: "Manual Removal of the Placenta",
+        image: "assets/ob-osce-extracted/image-005.png",
+        questions: [
+          {
+            prompt: "Identify the emergency procedure shown in the drawing.",
+            answer: "Bimanual manual removal of the placenta.",
+            explanation: "It is performed for retained placenta or severe postpartum hemorrhage before placental delivery.",
+            keywords: ["manual removal", "placenta", "bimanual", "retained"]
+          },
+          {
+            prompt: "Briefly outline the manual steps for safe separation.",
+            answer: "Introduce a cone-shaped hand along the umbilical cord into the uterine cavity, find the placental edge, separate it with sweeping side-to-side movements, and use the external hand to stabilize the fundus with abdominal counter-traction.",
+            explanation: "Counter-traction protects the uterus while the internal hand follows the cleavage plane.",
+            keywords: ["cone", "umbilical cord", "placental edge", "sweeping", "side to side", "fundus", "counter traction"]
+          }
+        ]
+      },
+      {
+        n: 13,
+        title: "Cervical Effacement and Dilation",
+        image: "assets/ob-osce-extracted/image-006.png",
+        questions: [
+          {
+            prompt: "What physiological changes are shown, and during which stage of labor do they occur?",
+            answer: "Cervical effacement and dilation during the first stage of labor.",
+            explanation: "The cervix thins, shortens, and opens in the first stage.",
+            keywords: ["effacement", "dilation", "first stage"]
+          },
+          {
+            prompt: "What is the average expected duration of this complete stage in a primigravida?",
+            answer: "About 12 hours in a primigravida.",
+            explanation: "This is the expected average duration for the first stage in a nulliparous patient.",
+            keywords: ["12", "hours", "primigravida", "nulliparous"]
+          }
+        ]
+      },
+      {
+        n: 14,
+        title: "Artificial Rupture of Membranes",
+        image: "assets/ob-osce-extracted/image-007.png",
+        questions: [
+          {
+            prompt: "Identify the procedure and name 3 distinct complications.",
+            answer: "Artificial rupture of membranes (ARM) or amniotomy. Complications include cord prolapse or compression, chorioamnionitis, fetal heart rate decelerations, maternal hemorrhage from unrecognized low-lying placenta, and fetal scalp injury.",
+            explanation: "Amniotomy can abruptly change pressure, expose infection risk, or injure maternal/fetal structures.",
+            keywords: ["artificial rupture", "arm", "amniotomy", "cord prolapse", "infection", "chorioamnionitis", "decelerations", "hemorrhage", "scalp injury"]
+          }
+        ]
+      },
+      {
+        n: 15,
+        title: "Chorionic Villus Sampling",
+        image: "assets/ob-osce-extracted/image-008.png",
+        questions: [
+          {
+            prompt: "Identify the procedure, optimal timing, and clinical indications.",
+            answer: "Chorionic villus sampling (CVS), performed at 10-12 weeks. Indications include advanced maternal age, early diagnosis of chromosomal abnormalities such as Down syndrome, and carrier parents for severe autosomal recessive disorders such as cystic fibrosis or thalassemia.",
+            explanation: "CVS samples trophoblastic tissue in the first trimester for genetic diagnosis.",
+            keywords: ["chorionic villus", "cvs", "10", "12", "advanced maternal age", "chromosomal", "down", "carrier", "cystic fibrosis", "thalassemia"]
+          }
+        ]
+      },
+      {
+        n: 16,
+        title: "Placenta Previa",
+        image: "assets/ob-osce-extracted/image-009.png",
+        questions: [
+          {
+            prompt: "Define the anomaly shown, the safe delivery mode for Grade 4, and its etiology.",
+            answer: "Placenta previa is implantation of the placenta in the lower uterine segment over or near the internal os. Grade 4 requires cesarean section. Risk factors include previous cesarean sections, D&C, myomectomy, advanced maternal age, smoking, IVF, multiple gestation, and uterine anomalies.",
+            explanation: "Complete previa covers the internal os, so vaginal delivery risks severe hemorrhage.",
+            keywords: ["placenta previa", "lower uterine segment", "internal os", "grade 4", "cesarean", "previous c section", "d&c", "myomectomy", "age", "smoking", "ivf", "multiple"]
+          }
+        ]
+      },
+      {
+        n: 17,
+        title: "Ventouse",
+        image: "assets/ob-osce-extracted/image-010.png",
+        questions: [
+          {
+            prompt: "What is this instrument, where should it be applied, and what are its standard clinical indices?",
+            answer: "Ventouse or vacuum extractor. Apply the cup to the flexion point on the sagittal suture, 3-4 cm anterior to the posterior fontanelle and midway between parietal eminences. Indications include prolonged second stage, maternal exhaustion, or suspected fetal distress. Contraindications include face presentation, prematurity under 34 weeks, or active fetal scalp bleeding. Complications include vaginal or cervical lacerations, chignon, cephalhematoma, and rare subgaleal or intracranial bleeding.",
+            explanation: "Correct cup placement promotes flexion and traction in the safest vector.",
+            keywords: ["ventouse", "vacuum", "flexion point", "sagittal", "posterior fontanelle", "3", "4", "second stage", "maternal exhaustion", "fetal distress", "face", "prematurity", "chignon", "cephalhematoma"]
+          }
+        ]
+      },
+      {
+        n: 18,
+        title: "Breech Presentation",
+        image: "assets/ob-osce-extracted/image-011.png",
+        questions: [
+          {
+            prompt: "What presentation type is shown, and what are its management streams at term?",
+            answer: "Breech presentation, such as frank breech. Management at 37 weeks or more includes external cephalic version if suitable, planned elective cesarean section, or selected assisted vaginal breech delivery with strict criteria and an experienced obstetrician.",
+            explanation: "Term breech management balances ECV, planned cesarean, and carefully selected vaginal delivery.",
+            keywords: ["breech", "frank", "external cephalic version", "ecv", "cesarean", "vaginal breech", "37", "experienced"]
+          }
+        ]
+      },
+      {
+        n: 19,
+        title: "Persistent Occipitoposterior Position",
+        image: "assets/ob-osce-extracted/image-012.png",
+        questions: [
+          {
+            prompt: "What are the delivery pathways and active management options for persistent OP malposition?",
+            answer: "Spontaneous face-to-pubis delivery, assisted face-to-pubis delivery with low/outlet forceps or ventouse, manual rotation to occiput-anterior followed by delivery, or instrumental rotation such as Kielland's forceps followed by traction.",
+            explanation: "Persistent OP may deliver posteriorly, be assisted as OP, or be rotated to OA manually or instrumentally.",
+            keywords: ["face to pubis", "forceps", "ventouse", "manual rotation", "occiput anterior", "instrumental rotation", "kielland"]
+          }
+        ]
+      }
+    ];
+
+    const EXTRA_OBSTETRICS_SLIDES = [
+      {
+            "n": 20,
+            "title": "Classical uterine incision",
+            "category": "obstetrics",
+            "source": "__??????? ?????_.pdf",
+            "sourcePage": 1,
+            "image": "assets/obstetrics-extra-normalized/ob-extra-001-name-hidden.png",
+            "questions": [
+                  {
+                        "prompt": "Identify the incision shown.",
+                        "answer": "Midline vertical uterine incision (classical incision).",
+                        "explanation": "A classical incision is a vertical incision in the upper uterine segment.",
+                        "keywords": [
+                              "midline",
+                              "vertical",
+                              "classical",
+                              "incision"
+                        ]
+                  },
+                  {
+                        "prompt": "Mention one indication for this incision.",
+                        "answer": "Preterm delivery with poorly formed lower segment.",
+                        "explanation": "The file lists preterm delivery with a poorly formed lower segment as an indication for classical cesarean section.",
+                        "keywords": [
+                              "preterm",
+                              "poorly",
+                              "formed",
+                              "lower",
+                              "segment"
+                        ]
+                  }
+            ]
+      },
+      {
+            "n": 21,
+            "title": "Lower uterine incisions",
+            "category": "obstetrics",
+            "source": "__??????? ?????_.pdf",
+            "sourcePage": 1,
+            "image": "assets/obstetrics-extra-normalized/ob-extra-002-names-hidden.png",
+            "questions": [
+                  {
+                        "prompt": "Identify the incisions shown.",
+                        "answer": "A is low transverse uterine incision and B is low vertical uterine incision.",
+                        "explanation": "The left diagram shows a low transverse incision; the right diagram shows a low vertical incision.",
+                        "keywords": [
+                              "low",
+                              "transverse",
+                              "vertical",
+                              "uterine",
+                              "incision"
+                        ]
+                  }
+            ]
+      },
+      {
+            "n": 22,
+            "title": "Abdominal skin incisions",
+            "category": "obstetrics",
+            "source": "__??????? ?????_.pdf",
+            "sourcePage": 3,
+            "image": "assets/obstetrics-extra-normalized/ob-extra-007.png",
+            "questions": [
+                  {
+                        "prompt": "Identify the skin incisions shown.",
+                        "answer": "Left: Pfannenstiel incision. Right: lower midline incision.",
+                        "explanation": "The left curved suprapubic incision is Pfannenstiel; the right vertical incision is lower midline.",
+                        "keywords": [
+                              "pfannenstiel",
+                              "lower",
+                              "midline",
+                              "incision"
+                        ]
+                  }
+            ]
+      }
+];
+
+    slides.forEach((slide) => { slide.category = "obstetrics"; });
+    slides.push(...EXTRA_OBSTETRICS_SLIDES);
+    slides.push(...(window.DOCX_OBSTETRICS_SLIDES || []));
+    slides.push(...(window.GYNECOLOGY_DOCX_SLIDES || []));
+    slides.forEach((slide, index) => { slide.displayNumber = index + 1; });
+
+    const startView = document.getElementById("startView");
+    const examView = document.getElementById("examView");
+    const finishView = document.getElementById("finishView");
+    const startBtn = document.getElementById("startBtn");
+    const categorySelect = document.getElementById("categorySelect");
+    const categoryCountText = document.getElementById("categoryCountText");
+    const restartBtn = document.getElementById("restartBtn");
+    const menuBtn = document.getElementById("menuBtn");
+    const againBtn = document.getElementById("againBtn");
+    const checkBtn = document.getElementById("checkBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const repeatBtn = document.getElementById("repeatBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const progressText = document.getElementById("progressText");
+    const timerText = document.getElementById("timerText");
+    const scoreText = document.getElementById("scoreText");
+    const slideLabel = document.getElementById("slideLabel");
+    const slideImage = document.getElementById("slideImage");
+    const questionList = document.getElementById("questionList");
+    const finishText = document.getElementById("finishText");
+
+    let session = [];
+    let current = 0;
+    let correctAnswers = 0;
+    let totalChecked = 0;
+    let startedAt = 0;
+    let timerId = null;
+
+    function normalize(value) {
+      return String(value || "")
+        .toLowerCase()
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function compact(value) {
+      return normalize(value).replace(/\s+/g, "");
+    }
+
+    function termMatches(answer, term) {
+      const a = normalize(answer);
+      const t = normalize(term);
+      if (!t) return false;
+      if (a.includes(t) || compact(answer).includes(compact(term))) return true;
+      const tokens = new Set(a.split(" ").filter(Boolean));
+      const termTokens = t.split(" ").filter(Boolean);
+      return termTokens.length > 1 && termTokens.every((token) => tokens.has(token));
+    }
+
+    function grade(question, value) {
+      const typed = value.trim();
+      if (!typed) return { status: "incorrect", correct: false, matched: 0, needed: 1 };
+      const keywords = question.keywords && question.keywords.length ? question.keywords : [question.answer];
+      const matches = keywords.filter((term) => termMatches(typed, term)).length;
+      const needed = keywords.length <= 3 ? 1 : Math.max(2, Math.ceil(keywords.length * 0.32));
+      if (matches >= needed) return { status: "correct", correct: true, matched: matches, needed };
+      return { status: matches > 0 ? "partial" : "incorrect", correct: false, matched: matches, needed };
+    }
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60).toString().padStart(2, "0");
+      const s = (seconds % 60).toString().padStart(2, "0");
+      return `${m}:${s}`;
+    }
+
+    function startTimer() {
+      clearInterval(timerId);
+      startedAt = Date.now();
+      timerText.classList.remove("over");
+      timerText.textContent = "00:00";
+      timerId = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+        timerText.textContent = formatTime(elapsed);
+        timerText.classList.toggle("over", elapsed > 30);
+      }, 250);
+    }
+
+    function renderSlide() {
+      const attempt = session[current];
+      const slide = slides[attempt.slideIndex];
+      slideLabel.textContent = `Slide ${slide.displayNumber || slide.n} of ${slides.length}`;
+      slideImage.src = slide.image;
+      slideImage.alt = `Exam slide ${slide.displayNumber || slide.n}`;
+      progressText.textContent = `${current + 1}/${session.length}`;
+      prevBtn.disabled = current === 0;
+      repeatBtn.disabled = !attempt.checked || attempt.repeated;
+      repeatBtn.textContent = attempt.repeated ? "Added Again" : "Show Again";
+      checkBtn.disabled = attempt.checked;
+      nextBtn.disabled = !attempt.checked;
+      questionList.innerHTML = "";
+
+      slide.questions.forEach((question, index) => {
+        const result = attempt.results[index];
+        const card = document.createElement("article");
+        card.className = "question";
+        card.innerHTML = `
+          <h3>Question ${index + 1}: ${question.prompt}</h3>
+          <textarea id="answer-${index}" autocomplete="off" spellcheck="true"></textarea>
+          <div class="result ${result ? result.status : ""}" id="result-${index}" style="${result ? "display: block;" : ""}"></div>
+        `;
+        questionList.appendChild(card);
+        document.getElementById(`answer-${index}`).value = attempt.answers[index] || "";
+        if (result) {
+          document.getElementById(`result-${index}`).innerHTML = result.html;
+        }
+      });
+
+      startTimer();
+    }
+
+    function saveCurrentAnswers() {
+      const attempt = session[current];
+      if (!attempt) return;
+      attempt.answers = [...questionList.querySelectorAll("textarea")].map((textarea) => textarea.value);
+    }
+
+    function updateScore() {
+      scoreText.textContent = `${correctAnswers}/${totalChecked || 0} correct`;
+    }
+
+    function checkAnswers() {
+      const attempt = session[current];
+      if (attempt.checked) return;
+      const slide = slides[attempt.slideIndex];
+      saveCurrentAnswers();
+      slide.questions.forEach((question, index) => {
+        const textarea = document.getElementById(`answer-${index}`);
+        const result = document.getElementById(`result-${index}`);
+        const verdict = grade(question, textarea.value);
+        const label = verdict.status === "correct" ? "Correct" : verdict.status === "partial" ? "Partial" : "Incorrect";
+        const html = `
+          <span class="verdict ${verdict.status}">${label}</span>
+          <p class="answer-text"><strong>Answer:</strong> ${question.answer}</p>
+        `;
+        totalChecked += 1;
+        if (verdict.correct) correctAnswers += 1;
+
+        result.className = `result ${verdict.status}`;
+        result.style.display = "block";
+        result.innerHTML = html;
+        attempt.results[index] = { status: verdict.status, html };
+      });
+      attempt.checked = true;
+      checkBtn.disabled = true;
+      repeatBtn.disabled = false;
+      nextBtn.disabled = false;
+      progressText.textContent = `${current + 1}/${session.length}`;
+      updateScore();
+    }
+
+    function showExam() {
+      startView.classList.add("hidden");
+      finishView.classList.add("hidden");
+      examView.style.display = "grid";
+      renderSlide();
+      updateScore();
+    }
+
+    function showMainMenu() {
+      clearInterval(timerId);
+      saveCurrentAnswers();
+      session = [];
+      current = 0;
+      correctAnswers = 0;
+      totalChecked = 0;
+      examView.style.display = "none";
+      finishView.classList.add("hidden");
+      startView.classList.remove("hidden");
+      progressText.textContent = "Ready";
+      timerText.textContent = "00:00";
+      timerText.classList.remove("over");
+      scoreText.textContent = "0 checked";
+      updateCategoryCount();
+    }
+
+    function slidePool() {
+      const selected = categorySelect.value;
+      if (selected === "both") {
+        return slides.map((slide, slideIndex) => ({ slide, slideIndex }));
+      }
+      return slides
+        .map((slide, slideIndex) => ({ slide, slideIndex }))
+        .filter((item) => item.slide.category === selected);
+    }
+
+    function shuffled(items) {
+      const copy = [...items];
+      for (let index = copy.length - 1; index > 0; index -= 1) {
+        const randomIndex = Math.floor(Math.random() * (index + 1));
+        [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
+      }
+      return copy;
+    }
+
+    function updateCategoryCount() {
+      const count = slidePool().length;
+      categoryCountText.textContent = `${count} slide${count === 1 ? "" : "s"} available`;
+    }
+
+    function restart() {
+      const pool = slidePool();
+      if (pool.length === 0) {
+        alert("No slides are available for this category yet.");
+        return;
+      }
+      session = shuffled(pool)
+        .map((item) => ({ slideIndex: item.slideIndex, answers: [], results: [], checked: false }));
+      current = 0;
+      correctAnswers = 0;
+      totalChecked = 0;
+      showExam();
+    }
+
+    function nextSlide() {
+      saveCurrentAnswers();
+      if (current === session.length - 1) {
+        clearInterval(timerId);
+        examView.style.display = "none";
+        finishView.classList.remove("hidden");
+        progressText.textContent = "Done";
+        timerText.textContent = "00:00";
+        timerText.classList.remove("over");
+        finishText.textContent = `You checked ${totalChecked} answers and matched ${correctAnswers}.`;
+        return;
+      }
+      current += 1;
+      renderSlide();
+    }
+
+    function previousSlide() {
+      if (current === 0) return;
+      saveCurrentAnswers();
+      current -= 1;
+      renderSlide();
+    }
+
+    function repeatSlide() {
+      const attempt = session[current];
+      if (!attempt || !attempt.checked || attempt.repeated) return;
+      session.push({ slideIndex: attempt.slideIndex, answers: [], results: [], checked: false });
+      attempt.repeated = true;
+      repeatBtn.disabled = true;
+      repeatBtn.textContent = "Added Again";
+      progressText.textContent = `${current + 1}/${session.length}`;
+    }
+
+    startBtn.addEventListener("click", restart);
+    restartBtn.addEventListener("click", restart);
+    menuBtn.addEventListener("click", showMainMenu);
+    againBtn.addEventListener("click", restart);
+    checkBtn.addEventListener("click", checkAnswers);
+    prevBtn.addEventListener("click", previousSlide);
+    repeatBtn.addEventListener("click", repeatSlide);
+    nextBtn.addEventListener("click", nextSlide);
+    categorySelect.addEventListener("change", updateCategoryCount);
+    updateCategoryCount();
+  </script>
+</body>
+</html>
